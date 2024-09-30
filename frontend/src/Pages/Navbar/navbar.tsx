@@ -9,6 +9,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout }) => {
+  console.log("Navbar props:", { title, isLoggedIn, onLogin, onLogout });
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -22,12 +23,17 @@ const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout })
 
   const handleLoginClick = () => {
     if (!isLoggedIn) {
-      onLogin();
+      window.location.href = 'http://localhost:8888/login'; 
     }
   };
 
-  const handleLogoutClick = () => {
-    onLogout();
+  const handleLogoutClick = async () => {
+    await fetch('http://localhost:8888/logout', {
+      method: 'GET',
+      credentials: 'include', 
+    });
+
+    onLogout(); // Call the onLogout prop to update the logged-in state
   };
 
   return (
@@ -57,13 +63,25 @@ const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout })
         </button>
         <div className={`md:flex ${isOpen ? 'block' : 'hidden'} md:space-x-4 relative`}>
           {isLoggedIn ? (
-            <button
-              className="flex items-center hover:text-blue-600 transition-colors"
-              onClick={toggleDropdown}
-            >
-              Account
-              <ChevronDownIcon className="w-4 h-4 ml-1" />
-            </button>
+            <>
+              <button
+                className="flex items-center hover:text-blue-600 transition-colors"
+                onClick={toggleDropdown}
+              >
+                Account
+                <ChevronDownIcon className="w-4 h-4 ml-1" />
+              </button>
+              {isDropdownOpen && (
+                <ul className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+                  <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+                    Manage account
+                  </li>
+                  <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer" onClick={handleLogoutClick}>
+                    Logout
+                  </li>
+                </ul>
+              )}
+            </>
           ) : (
             <button
               className="hover:text-blue-600 transition-colors"
@@ -71,16 +89,6 @@ const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout })
             >
               Login
             </button>
-          )}
-          {isLoggedIn && isDropdownOpen && (
-            <ul className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
-              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer">
-                Manage
-              </li>
-              <li className="py-2 px-4 hover:bg-gray-100 cursor-pointer" onClick={handleLogoutClick}>
-                Logout
-              </li>
-            </ul>
           )}
         </div>
       </div>
