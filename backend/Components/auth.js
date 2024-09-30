@@ -1,11 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
 const crypto = require('crypto');
 const querystring = require('querystring');
 const request = require('request');
-const cookieParser = require('cookie-parser');
 
 const client_id = "54da85c1c7114ffb810148c9cbdede29";
 const client_secret = "e2abdb2c6d594b229a47f11aabeb7f92";
@@ -26,17 +24,34 @@ router.get("/", (req, res) => {
 
 router.get('/login', function(req, res) {
     const state = generateRandomString(16);
-    const scope = 'user-read-private user-read-email';
-
+    const scope = 'user-read-private user-read-email user-top-read';
+  
     res.redirect('https://accounts.spotify.com/authorize?' +
-        querystring.stringify({
-            response_type: 'code',
-            client_id: client_id,
-            scope: scope,
-            redirect_uri: redirect_uri,
-            state: state
-        }));
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state,
+        show_dialog: true // Forces Spotify login prompt to show up
+      }));
 });
+
+router.get('/logout', (req, res) => {
+    res.clearCookie('access_token', { httpOnly: true });
+    res.clearCookie('refresh_token', { httpOnly: true });
+    res.redirect('/'); 
+});
+
+router.get('/check-login-status', (req, res) => {
+    const accessToken = req.cookies['access_token'];
+    
+    if (accessToken) {
+      res.json({ isLoggedIn: true });
+    } else {
+      res.json({ isLoggedIn: false });
+    }
+  });
 
 router.get('/callback', function(req, res) {
     const code = req.query.code || null;
@@ -59,23 +74,19 @@ router.get('/callback', function(req, res) {
             json: true
         };
 
-        // Use 'request' to send the token request
         request.post(authOptions, function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 const access_token = body.access_token;
                 const refresh_token = body.refresh_token;
 
                 // Set token as cookie
-                res.cookie('access_token', access_token, { httpOnly: true, secure: false }); // change secure to true when deploying to prod
+                res.cookie('access_token', access_token, { httpOnly: true, secure: false }); 
+                res.cookie('refresh_token', refresh_token, { httpOnly: true, secure: false }); 
 
                 console.log("Access token is:", access_token);
                 console.log("Refresh token is:", refresh_token);
 
-                // Redirect to the homepage once logged in
-                res.redirect('/dashboard' + querystring.stringify({
-                    access_token: access_token,
-                    refresh_token: refresh_token
-                }));
+                res.redirect('http://localhost:3000'); 
             } else {
                 console.error('Token exchange error:', body); 
                 res.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
