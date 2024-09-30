@@ -1,33 +1,49 @@
-import React, { useState } from 'react';
-import Homepage from './Pages/Homepage/homepage';
-import Navbar from './Pages/Navbar/navbar'
+import React, { useState, useEffect } from 'react';
+import Navbar from './Pages/Navbar/navbar';
 
-
-function App() {
+const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = () => {
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8888/check-login-status', { 
+          credentials: 'include',
+        });
+  
+        const data = await response.json(); // Parse JSON response
+        console.log("Login Status:", data.isLoggedIn);
+        setIsLoggedIn(data.isLoggedIn);
+      } catch (error) {
+        console.error('Error checking login status:', error);
+        setIsLoggedIn(false);
+      }
+    };
+  
+    checkLoginStatus();
+  }, []);
+  
 
-    setIsLoggedIn(true);
+  const handleLogin = () => {
+    window.location.href = 'http://localhost:8888/login';
   };
 
-  const handleLogout = () => {
-
+  const handleLogout = async () => {
+    await fetch('/logout', { credentials: 'include' });
     setIsLoggedIn(false);
   };
 
   return (
-    <>
-      {/* <Homepage /> */}
-      <Navbar 
-        title="Music Dashboard"
-        isLoggedIn={isLoggedIn}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-      />
-    </>
+    <div>
+      <Navbar title="Spotify Stats" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      {isLoggedIn ? (
+        <div>Welcome back!</div>
+      ) : (
+        <div>Please log in to access more features.</div>
+      )}
+    </div>
   );
-}
+};
 
 export default App;
 
