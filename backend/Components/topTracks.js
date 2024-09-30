@@ -39,7 +39,7 @@ module.exports = router;
 /**
  have this in the frontend
 
- fetch(`/top-artists?time_range=medium_term`)
+ fetch(`/top-tracks?time_range=shirt`)
   .then(response => response.json())
   .then(data => {
     console.log(data);  // Display the top artists for the selected time range

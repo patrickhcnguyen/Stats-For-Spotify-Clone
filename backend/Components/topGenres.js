@@ -52,3 +52,12 @@ router.get('/top-genres', function(req, res) {
 });
 
 module.exports = router;
+
+/**
+ fetch('/top-genres?time_range=medium_term')
+  .then(response => response.json())
+  .then(data => {
+    console.log('Top genres:', data.topGenres);
+  })
+  .catch(error => console.error('Error fetching top genres:', error));
+ */
