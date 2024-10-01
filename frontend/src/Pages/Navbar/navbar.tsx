@@ -9,7 +9,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout }) => {
-  console.log("Navbar props:", { title, isLoggedIn, onLogin, onLogout });
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -33,43 +32,38 @@ const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout })
       credentials: 'include', 
     });
 
-    onLogout(); // Call the onLogout prop to update the logged-in state
+    onLogout(); 
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center space-x-4 md:space-x-6">
-          <HomeIcon className="w-6 h-6 mr-2" />
-          <a href="track/top" className="hover:text-blue-600 transition-colors">
+    <nav className="sticky top-0 z-50 bg-white shadow-md h-16"> 
+      <div className="w-full px-6 py-3 flex justify-between items-center"> 
+        <a href="/homepage" className="flex items-center space-x-2">
+          <HomeIcon className="w-7 h-7" /> 
+          <span className="font-bold text-lg">Stats For Spotify</span> 
+        </a>
+        <div className="flex items-center space-x-6 ml-auto">
+          <a href="track/top" className="hover:text-blue-600 transition-colors text-lg"> 
             Top Tracks
           </a>
-          <a href="artist/top" className="hover:text-blue-600 transition-colors">
+          <a href="artist/top" className="hover:text-blue-600 transition-colors text-lg">
             Top Artists
           </a>
-          <a href="genre/top" className="hover:text-blue-600 transition-colors">
+          <a href="genre/top" className="hover:text-blue-600 transition-colors text-lg">
             Top Genres
           </a>
-          <a href="track/recent" className="hover:text-blue-600 transition-colors">
+          <a href="track/recent" className="hover:text-blue-600 transition-colors text-lg">
             Recently Played
           </a>
-        </div>
-        <button
-          className="md:hidden"
-          aria-label="Toggle menu"
-          onClick={toggleMenu}
-        >
-          {isOpen ? <XMarkIcon className="w-6 h-6" /> : <MinusIcon className="w-6 h-6" />}
-        </button>
-        <div className={`md:flex ${isOpen ? 'block' : 'hidden'} md:space-x-4 relative`}>
+
           {isLoggedIn ? (
             <>
               <button
-                className="flex items-center hover:text-blue-600 transition-colors"
+                className="flex items-center hover:text-blue-600 transition-colors text-lg"
                 onClick={toggleDropdown}
               >
                 Account
-                <ChevronDownIcon className="w-4 h-4 ml-1" />
+                <ChevronDownIcon className="w-5 h-5 ml-1" />
               </button>
               {isDropdownOpen && (
                 <ul className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
@@ -84,15 +78,23 @@ const Navbar: React.FC<NavbarProps> = ({ title, isLoggedIn, onLogin, onLogout })
             </>
           ) : (
             <button
-              className="hover:text-blue-600 transition-colors"
+              className="hover:text-blue-600 transition-colors text-lg"
               onClick={handleLoginClick}
             >
               Login
             </button>
           )}
         </div>
+        <button
+          className="md:hidden ml-auto"
+          aria-label="Toggle menu"
+          onClick={toggleMenu}
+        >
+          {isOpen ? <XMarkIcon className="w-6 h-6" /> : <MinusIcon className="w-6 h-6" />}
+        </button>
       </div>
     </nav>
+
   );
 };
 
