@@ -97,3 +97,4 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, onLogin, onLogout }) => {
 };
 
 export default Navbar;
+
