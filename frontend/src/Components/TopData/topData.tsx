@@ -1,31 +1,38 @@
 import React, { useEffect, useState } from 'react';
 
+// Interfaces for track and artist data
 interface Track {
   name: string;
   artist: string;
 }
 
+interface Artist {
+  name: string;
+}
+
+interface Genre {
+  name: string;
+}
+
 export const TopTracks: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>([]);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTopTracks = async () => {
       try {
         const response = await fetch('http://localhost:8888/top-tracks?time_range=short_term', {
           method: 'GET',
-          credentials: 'include', // This was the fix lol
+          credentials: 'include', // THE FIX
         });
 
-        console.log('Response Status:', response.status);
-        
         if (!response.ok) {
           const text = await response.text();
           console.error('Response Text:', text);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json(); // Parse JSON directly
+        const data = await response.json(); 
         const trackData = data.items.map((item: any) => ({
           name: item.name,
           artist: item.artists[0].name,
@@ -33,6 +40,7 @@ export const TopTracks: React.FC = () => {
         setTracks(trackData);
       } catch (error) {
         console.error('Error fetching top tracks:', error);
+        setError('Error fetching top tracks.');
       }
     };
 
@@ -54,68 +62,96 @@ export const TopTracks: React.FC = () => {
   );
 };
 
+export const TopArtists: React.FC = () => {
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-// interface Artist {
-//   name: string;
-// }
+  useEffect(() => {
+    const fetchTopArtists = async () => {
+      try {
+        const response = await fetch('http://localhost:8888/top-artists?time_range=short_term', {
+          method: 'GET',
+          credentials: 'include', // Ensure cookies are included
+        });
 
-// interface Genre {
-//   name: string;
-// }
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('Response Text:', text);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-// export const TopArtists: React.FC = () => {
-//   const [artists, setArtists] = useState<Artist[]>([]);
+        const data = await response.json(); // Parse JSON directly
+        const artistData = data.items.map((item: any) => ({
+          name: item.name,
+        }));
+        setArtists(artistData);
+      } catch (error) {
+        console.error('Error fetching top artists:', error);
+        setError('Error fetching top artists.');
+      }
+    };
 
-//   useEffect(() => {
-//     const fetchTopArtists = async () => {
-//       const response = await fetch('/top-artists'); 
-//       const data = await response.json();
-//       const artistData = data.items.map((item: any) => ({
-//         name: item.name,
-//       }));
-//       setArtists(artistData);
-//     };
+    fetchTopArtists();
+  }, []);
 
-//     fetchTopArtists();
-//   }, []);
+  return (
+    <div>
+      <h2>Top Artists</h2>
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      <ul>
+        {artists.map((artist, index) => (
+          <li key={index}>
+            {index + 1}. {artist.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
-//   return (
-//     <div>
-//       <h2>Top Artists</h2>
-//       <ul>
-//         {artists.map((artist, index) => (
-//           <li key={index}>{index + 1}. {artist.name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
+export const TopGenres: React.FC = () => {
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-// export const TopGenres: React.FC = () => {
-//   const [genres, setGenres] = useState<Genre[]>([]);
+  useEffect(() => {
+    const fetchTopGenres = async () => {
+      try {
+        const response = await fetch('http://localhost:8888/top-genres?time_range=short_term', {
+          method: 'GET',
+          credentials: 'include', 
+        });
 
-//   useEffect(() => {
-//     const fetchTopGenres = async () => {
-//       const response = await fetch('/top-genres'); 
-//       const data = await response.json();
-//       const genreData = data.items.map((item: any) => ({
-//         name: item.name,
-//       }));
-//       setGenres(genreData);
-//     };
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('Response Text:', text);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-//     fetchTopGenres();
-//   }, []);
+        const data = await response.json(); 
+        const genreData = data.topGenres.map((genre: string) => ({
+          name: genre,
+        }));
+        setGenres(genreData);
+      } catch (error) {
+        console.error('Error fetching top genres:', error);
+        setError('Error fetching top genres.');
+      }
+    };
 
-//   return (
-//     <div>
-//       <h2>Top Genres</h2>
-//       <ul>
-//         {genres.map((genre, index) => (
-//           <li key={index}>{index + 1}. {genre.name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
+    fetchTopGenres();
+  }, []);
 
+  return (
+    <div>
+      <h2>Top Genres</h2>
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      <ul>
+        {genres.map((genre, index) => (
+          <li key={index}>
+            {index + 1}. {genre.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
