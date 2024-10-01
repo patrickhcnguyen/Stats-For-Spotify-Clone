@@ -35,6 +35,7 @@ router.get('/login', function(req, res) {
         state: state,
         show_dialog: true // Forces Spotify login prompt to show up
       }));
+      
 });
 
 router.get('/logout', (req, res) => {
@@ -79,11 +80,19 @@ router.get('/callback', function(req, res) {
                 const access_token = body.access_token;
                 const refresh_token = body.refresh_token;
 
-                // Set token as cookie
-                res.cookie('access_token', access_token, { httpOnly: true, secure: false }); 
-                res.cookie('refresh_token', refresh_token, { httpOnly: true, secure: false }); 
-
-                console.log("Access token is:", access_token);
+                res.cookie('access_token', access_token, {
+                    path: '/',
+                    httpOnly: false, // LET ME ACCESS MY COOKIES
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'Lax',
+                });                
+                  res.cookie('refresh_token', refresh_token, { 
+                    httpOnly: false, // 
+                    secure: false,
+                    sameSite: 'Lax' 
+                  });
+                  
+                console.log('Access token set in cookie:', access_token);
                 console.log("Refresh token is:", refresh_token);
 
                 res.redirect('http://localhost:3000'); 
