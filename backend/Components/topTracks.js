@@ -3,13 +3,14 @@ const request = require('request');
 const router = express.Router();
 
 router.get('/top-tracks', function(req, res) {
-    const accessToken = req.cookies.access_token; // Get the access token from cookies
+    const accessToken = req.cookies.access_token; // Access the cookie here
+
+    console.log('Access Token from topTracks.js is:', accessToken); // debugging statement
 
     if (!accessToken) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Get's time range from time query, defaults to 'short_term'
     const timeRange = req.query.time_range || 'short_term'; 
 
     const options = {
@@ -25,7 +26,12 @@ router.get('/top-tracks', function(req, res) {
     };
 
     request.get(options, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
+        if (error) {
+            console.error('Request error:', error);
+            return res.status(500).json({ error: 'Error fetching data from Spotify' });
+        }
+        
+        if (response.statusCode === 200) {
             res.json(body);  
         } else {
             console.error('Error fetching top tracks:', body);
@@ -35,15 +41,3 @@ router.get('/top-tracks', function(req, res) {
 });
 
 module.exports = router;
-
-/**
- have this in the frontend
-
- fetch(`/top-tracks?time_range=shirt`)
-  .then(response => response.json())
-  .then(data => {
-    console.log(data);  // Display the top artists for the selected time range
-  })
-  .catch(error => console.error('Error fetching top artists:', error));
-
- */
