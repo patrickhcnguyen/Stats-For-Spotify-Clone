@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Pages/Navbar/navbar';
+import Hero from './Pages/Hero/hero';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,7 +23,6 @@ const App: React.FC = () => {
   
     checkLoginStatus();
   }, []);
-  
 
   const handleLogin = () => {
     window.location.href = 'http://localhost:8888/login';
@@ -34,20 +34,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div>
-      <Navbar title="Spotify Stats" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
-      {isLoggedIn ? (
-        <div>Welcome back!</div>
-      ) : (
-        <div>Please log in to access more features.</div>
-      )}
-    </div>
+    <>
+      <div>
+        <Navbar title="Spotify Stats" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      </div>
+      <div>
+        <Hero title="Welcome to Stats For Spotify" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      </div>
+    </>
   );
 };
 
 export default App;
-
-/**
- <>
- </> is a React fragment which we use to group multiple elements without adding unnecessary HTML elements like <div>
- */
