@@ -25,3 +25,4 @@ const Hero: React.FC<HeroProps> = ({ title, isLoggedIn, onLogin, onLogout }) => 
 };
 
 export default Hero;
+
