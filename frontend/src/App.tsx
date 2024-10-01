@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './Pages/Navbar/navbar';
-import Hero from './Pages/Hero/hero';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './Components/Navbar/navbar';
+import Hero from './Components/Hero/hero';
+import Box from './Components/Box/box';
+import { TopTracks } from './Components/TopData/topData';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,14 +37,22 @@ const App: React.FC = () => {
   };
 
   return (
-    <>
-      <div>
-        <Navbar title="Spotify Stats" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
-      </div>
-      <div>
+    <Router>
+      <Navbar 
+        title="Stats For Spotify"
+        isLoggedIn={isLoggedIn}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+      />
+       <div>
         <Hero title="Welcome to Stats For Spotify" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
       </div>
-    </>
+      <Routes>
+        <Route path="/" element={<Box />} /> 
+        <Route path="/track/top" element={<TopTracks />} />
+        <Route path="/track/recent" element={<h1>Recently Played</h1>} /> 
+      </Routes>
+    </Router>
   );
 };
 
