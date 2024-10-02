@@ -9,7 +9,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ title, isLoggedIn, onLogin, onLogout }) => {
   return (
-    <div className="w-full h-48 flex flex-col items-center justify-center bg-white">
+    <div className="w-full h-40 flex flex-col items-center justify-center bg-white">
       <h1 className="pb-2 text-2xl font-bold">
         {title}
       </h1>
