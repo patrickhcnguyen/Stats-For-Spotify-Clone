@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar/navbar';
 import Hero from './Components/Hero/hero';
 import Box from './Components/Box/box';
-import { TopTracks } from './Components/TopData/topData';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,7 +14,7 @@ const App: React.FC = () => {
           credentials: 'include',
         });
   
-        const data = await response.json(); // Parse JSON response
+        const data = await response.json();
         console.log("Login Status:", data.isLoggedIn);
         setIsLoggedIn(data.isLoggedIn);
       } catch (error) {
@@ -44,16 +43,21 @@ const App: React.FC = () => {
         onLogin={handleLogin}
         onLogout={handleLogout}
       />
-       <div>
-        <Hero title="Welcome to Stats For Spotify" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      <Hero title="Welcome to Stats For Spotify" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
+      <div className="flex bg-gray-100"> 
+        <Box /> 
+        <Routes>
+          {/* <Route path="/track/top" element={<TopTracks />} />
+          <Route path="/artist/top" element={<TopArtists />} />
+          <Route path="/genre/top" element={<TopGenres />} /> */}
+          <Route path="/track/recent" element={<h1>Recently Played</h1>} />
+          <Route path="/" element={<h1>Home Page Content</h1>} /> 
+        </Routes>
       </div>
-      <Routes>
-        <Route path="/" element={<Box />} /> 
-        <Route path="/track/top" element={<TopTracks />} />
-        <Route path="/track/recent" element={<h1>Recently Played</h1>} /> 
-      </Routes>
     </Router>
   );
 };
 
 export default App;
+
+
