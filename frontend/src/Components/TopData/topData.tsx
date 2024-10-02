@@ -8,6 +8,7 @@ interface Track {
 
 interface Artist {
   name: string;
+  albumImageUrl: string;
 }
 
 interface Genre {
@@ -23,7 +24,7 @@ export const TopTracks: React.FC = () => {
       try {
         const response = await fetch('http://localhost:8888/top-tracks?time_range=short_term', {
           method: 'GET',
-          credentials: 'include', // THE FIX, allows us to send cookies to access 
+          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -33,11 +34,17 @@ export const TopTracks: React.FC = () => {
         }
 
         const data = await response.json();
-        const trackData = data.items.map((item: any) => ({
-          name: item.name,
-          artist: item.artists[0].name,
-          albumImageUrl: item.album.images.find((img: any) => img.width === 300)?.url || '', // Using 300x300 image for now
-        }));
+        const trackData = data.items.map((item: any) => {
+          const albumImageUrl = item.album.images && item.album.images.length >= 2 
+            ? item.album.images[1].url // Selecting the middle image (300x300)
+            : ''; // Default to empty string if no image available
+
+          return {
+            name: item.name,
+            artist: item.artists[0].name,
+            albumImageUrl: albumImageUrl,
+          };
+        });
         setTracks(trackData);
       } catch (error) {
         console.error('Error fetching top tracks:', error);
@@ -86,9 +93,13 @@ export const TopArtists: React.FC = () => {
         }
 
         const data = await response.json(); 
-        const artistData = data.items.map((item: any) => ({
-          name: item.name,
-        }));
+        const artistData = data.items.map((item: any) => {
+          const imageUrl = item.images && item.images.length >= 2 ? item.images[1].url : ''; 
+          return {
+            name: item.name,
+            albumImageUrl: imageUrl,
+          };
+        });
         setArtists(artistData);
       } catch (error) {
         console.error('Error fetching top artists:', error);
@@ -105,7 +116,8 @@ export const TopArtists: React.FC = () => {
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
       <ul>
         {artists.map((artist, index) => (
-          <li key={index}>
+          <li key={index} className="flex items-center mb-4">
+            <img src={artist.albumImageUrl} alt={artist.name} className="w-16 h-16 mr-4" />
             {index + 1}. {artist.name}
           </li>
         ))}
@@ -113,6 +125,8 @@ export const TopArtists: React.FC = () => {
     </div>
   );
 };
+
+
 
 export const TopGenres: React.FC = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
