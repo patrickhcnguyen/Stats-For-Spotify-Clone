@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Navbar from './Components/Navbar/navbar';
 import Hero from './Components/Hero/hero';
 import Box from './Components/Box/box';
@@ -46,13 +46,6 @@ const App: React.FC = () => {
       <Hero title="Welcome to Stats For Spotify" isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
       <div className="flex bg-gray-100"> 
         <Box /> 
-        <Routes>
-          {/* <Route path="/track/top" element={<TopTracks />} />
-          <Route path="/artist/top" element={<TopArtists />} />
-          <Route path="/genre/top" element={<TopGenres />} /> */}
-          <Route path="/track/recent" element={<h1>Recently Played</h1>} />
-          <Route path="/" element={<h1>Home Page Content</h1>} /> 
-        </Routes>
       </div>
     </Router>
   );
