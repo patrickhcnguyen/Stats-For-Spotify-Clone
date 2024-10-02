@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-// Interfaces for track and artist data
 interface Track {
   name: string;
   artist: string;
+  albumImageUrl: string;
 }
 
 interface Artist {
@@ -23,7 +23,7 @@ export const TopTracks: React.FC = () => {
       try {
         const response = await fetch('http://localhost:8888/top-tracks?time_range=short_term', {
           method: 'GET',
-          credentials: 'include', // THE FIX
+          credentials: 'include', // THE FIX, allows us to send cookies to access 
         });
 
         if (!response.ok) {
@@ -32,10 +32,11 @@ export const TopTracks: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json(); 
+        const data = await response.json();
         const trackData = data.items.map((item: any) => ({
           name: item.name,
           artist: item.artists[0].name,
+          albumImageUrl: item.album.images.find((img: any) => img.width === 300)?.url || '', // Using 300x300 image for now
         }));
         setTracks(trackData);
       } catch (error) {
@@ -53,8 +54,12 @@ export const TopTracks: React.FC = () => {
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
       <ul>
         {tracks.map((track, index) => (
-          <li key={index}>
-            {index + 1}. {track.name} by {track.artist}
+          <li key={index} className="flex items-center mb-4">
+            <img src={track.albumImageUrl} alt={track.name} className="w-16 h-16 mr-4" />
+            <div>
+              <p className="font-bold">{index + 1}. {track.name}</p>
+              <p>{track.artist}</p>
+            </div>
           </li>
         ))}
       </ul>
@@ -71,7 +76,7 @@ export const TopArtists: React.FC = () => {
       try {
         const response = await fetch('http://localhost:8888/top-artists?time_range=short_term', {
           method: 'GET',
-          credentials: 'include', // Ensure cookies are included
+          credentials: 'include', 
         });
 
         if (!response.ok) {
@@ -80,7 +85,7 @@ export const TopArtists: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json(); // Parse JSON directly
+        const data = await response.json(); 
         const artistData = data.items.map((item: any) => ({
           name: item.name,
         }));
