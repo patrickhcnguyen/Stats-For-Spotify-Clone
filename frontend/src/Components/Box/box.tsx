@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { TopTracks, TopArtists, TopGenres } from '../TopData/topData';
+import { TopTracks, TopArtists, TopGenres, Recent } from '../TopData/topData';
 
 const Box: React.FC = () => {
   const location = useLocation(); 
@@ -14,6 +14,8 @@ const Box: React.FC = () => {
         return <TopArtists />;
       case '/genre/top':
         return <TopGenres />;
+      case '/track/recent':
+        return <Recent />;
       default:
         return <div>Select a category to view the stats.</div>; 
     }
