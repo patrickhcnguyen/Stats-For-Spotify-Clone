@@ -13,15 +13,17 @@ app.use(cors({
 
 app.use(cookieParser());
 
-const authRoutes = require('./Components/auth');
-const topArtistsRoutes = require('./Components/topArtists');
-const topTrackRoutes = require('./Components/topTracks');
-const topGenreRoutes = require('./Components/topGenres');
+const authRoutes = require('./Routes/auth');
+const topArtistsRoutes = require('./Routes/topArtists');
+const topTrackRoutes = require('./Routes/topTracks');
+const topGenreRoutes = require('./Routes/topGenres');
+const recentlyPlayedRoutes = require ('./Routes/recentlyPlayed');
 
 app.use(authRoutes);
 app.use(topArtistsRoutes);
 app.use(topTrackRoutes);
 app.use(topGenreRoutes);
+app.use(recentlyPlayedRoutes);
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
