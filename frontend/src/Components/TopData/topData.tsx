@@ -15,6 +15,12 @@ interface Genre {
   name: string;
 }
 
+interface Recent {
+  name: string;
+  artist: string;
+  albumImageUrl: string;
+}
+
 export const TopTracks: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +197,59 @@ export const TopGenres: React.FC = () => {
         {genres.map((genre, index) => (
           <li key={index}>
             {index + 1}. {genre.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export const Recent: React.FC = () => {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchRecentlyPlayed();
+  }, []);
+
+  const fetchRecentlyPlayed = async () => {
+    try {
+      const response = await fetch(`http://localhost:8888/recently-played`, {
+        method: 'GET',
+        credentials: 'include', 
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Response Text:', text);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const trackData = data.items.map((item: any) => ({
+        name: item.track.name, 
+        artist: item.track.artists[0].name, 
+        albumImageUrl: item.track.album.images[1]?.url || '', // Choose middle image (300x300)
+      }));
+      setTracks(trackData);
+    } catch (error) {
+      console.error('Error fetching recently played tracks:', error);
+      setError('Error fetching recently played tracks.');
+    }
+  };
+
+  return (
+    <div>
+      <h2>Recently Played Tracks</h2>
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      <ul>
+        {tracks.map((track, index) => (
+          <li key={index} className="flex items-center mb-4">
+            <img src={track.albumImageUrl} alt={track.name} className="w-16 h-16 mr-4" />
+            <div>
+              <p className="font-bold">{index + 1}. {track.name}</p>
+              <p>{track.artist}</p>
+            </div>
           </li>
         ))}
       </ul>
