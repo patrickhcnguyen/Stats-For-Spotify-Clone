@@ -20,7 +20,7 @@ const Box: React.FC = () => {
   };
 
   return (
-    <div className="border-black border-2 p-4 w-1/4 bg-gray-100 ml-8 mt-4 drop-shadow-md">
+    <div className="border-black border-2 p-4 w-1/4 bg-gray-100 ml-12 mt-4 drop-shadow-lg">
       <h1 className="text-lg font-bold">Music Stats</h1>
       {renderComponent()} 
     </div>
